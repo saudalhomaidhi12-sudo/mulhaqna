@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطولة البلوت — ملحقنا</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0c0c0e;
+  --panel:#141416;
+  --panel2:#1a1a1d;
+  --gold:#d4af37;
+  --gold-l:#f0d278;
+  --gold-dim:#7a6428;
+  --white:#f5f3ee;
+  --grey:#a5a29c;
+  --red:#e05252;
+  --green:#5cbf7a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Cairo',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  min-height:100vh;
+  background-image:radial-gradient(ellipse 60% 40% at 50% 18%, rgba(212,175,55,.08), transparent);
+}
+.wrap{max-width:680px;margin:0 auto;padding:28px 18px 60px}
+
+header{text-align:center;padding:18px 0 26px;border-bottom:1px solid var(--gold-dim);margin-bottom:30px}
+.fifa{color:var(--gold);font-size:13px;font-weight:800;letter-spacing:3px}
+h1{font-size:38px;font-weight:900;margin:2px 0 0}
+.divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 6px}
+.divider .line{width:90px;height:2px;background:var(--gold)}
+.divider .diamond{width:9px;height:9px;background:var(--gold);transform:rotate(45deg)}
+.sub{font-size:24px;font-weight:900;color:var(--gold-l)}
+.note{font-size:13px;color:var(--grey);margin-top:4px}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--gold-dim);
+  border-radius:14px;
+  padding:26px 22px;
+  position:relative;
+}
+.card::before{
+  content:"";position:absolute;inset:6px;border:1px solid rgba(212,175,55,.18);
+  border-radius:10px;pointer-events:none;
+}
+.card h2{font-size:19px;font-weight:800;color:var(--gold);text-align:center;margin-bottom:18px}
+
+.players{display:flex;gap:14px;align-items:stretch}
+.player{
+  flex:1;background:var(--panel2);border:1px solid #2a2a2e;border-radius:10px;
+  padding:16px 14px;text-align:center;transition:border-color .2s;
+}
+.player:focus-within{border-color:var(--gold)}
+.player .suit{font-size:26px;color:var(--gold);line-height:1}
+.player label{display:block;font-size:13px;color:var(--grey);font-weight:700;margin:6px 0 8px}
+.player input{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--gold-dim);
+  color:var(--white);font-family:'Cairo',sans-serif;font-size:17px;font-weight:700;
+  text-align:center;padding:6px 2px;outline:none;
+}
+.player input::placeholder{color:#56534d;font-weight:600}
+.player input:focus{border-bottom-color:var(--gold-l)}
+.vs{display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:var(--gold)}
+
+.btn{
+  display:block;width:100%;margin-top:20px;padding:13px;
+  background:linear-gradient(180deg,var(--gold-l),var(--gold));
+  color:#181408;border:none;border-radius:10px;
+  font-family:'Cairo',sans-serif;font-size:18px;font-weight:900;cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,175,55,.25)}
+.btn:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}
+
+.msg{
+  margin-top:14px;padding:11px 14px;border-radius:9px;font-size:15px;font-weight:700;
+  display:none;text-align:center;
+}
+.msg.error{display:block;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.45);color:var(--red)}
+.msg.success{display:block;background:rgba(92,191,122,.1);border:1px solid rgba(92,191,122,.4);color:var(--green)}
+
+.teams{margin-top:36px}
+.teams-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.teams-head h2{font-size:20px;font-weight:900;color:var(--gold-l)}
+.count{font-size:14px;color:var(--grey);font-weight:700}
+.count b{color:var(--gold)}
+.team{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel);border:1px solid #26262a;border-radius:11px;
+  padding:13px 16px;margin-bottom:10px;
+}
+.team .num{
+  min-width:38px;height:38px;border-radius:9px;border:1px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-weight:900;font-size:16px;
+}
+.team .names{flex:1;font-size:16.5px;font-weight:800}
+.team .names .x{color:var(--gold);font-weight:900;margin:0 8px;font-size:13px}
+.empty{
+  text-align:center;color:var(--grey);font-size:15px;font-weight:600;
+  padding:30px 10px;border:1px dashed #34342f;border-radius:11px;
+}
+.loading{text-align:center;color:var(--grey);padding:24px;font-weight:700}
+
+footer{text-align:center;margin-top:44px;color:var(--gold);font-weight:900;font-size:17px}
+footer .en{display:block;color:var(--grey);font-weight:700;font-size:11.5px;letter-spacing:2px;margin-top:2px}
+
+@media(max-width:480px){
+  .players{flex-direction:column}
+  .vs{padding:2px 0}
+  h1{font-size:32px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="fifa">FIFA WORLD CUP 2026™</div>
+    <h1>ملحقنا</h1>
+    <div class="divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+    <div class="sub">بطولة البلوت</div>
+    <div class="note">سجّل فريقك الثنائي — كل لاعب يحق له التسجيل في فريق واحد فقط</div>
+  </header>
+
+  <div class="card">
+    <h2>تسجيل فريق جديد</h2>
+    <div class="players">
+      <div class="player">
+        <div class="suit">♠</div>
+        <label for="p1">اللاعب الأول</label>
+        <input id="p1" type="text" placeholder="الاسم" maxlength="40" autocomplete="off">
+      </div>
+      <div class="vs">×</div>
+      <div class="player">
+        <div class="suit">♥</div>
+        <label for="p2">اللاعب الثاني</label>
+        <input id="p2" type="text" placeholder="الاسم" maxlength="40" autocomplete="off">
+      </div>
+    </div>
+    <button class="btn" id="registerBtn" onclick="registerTeam()">تسجيل الفريق</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="teams">
+    <div class="teams-head">
+      <h2>الفرق المسجلة</h2>
+      <div class="count">عدد الفرق: <b id="teamCount">0</b></div>
+    </div>
+    <div id="teamsList"><div class="loading">جارٍ تحميل الفرق…</div></div>
+  </div>
+
+  <footer>نلحق المجد<span class="en">WE CHASE GLORY — MULHAQNA</span></footer>
+</div>
+
+<script>
+// ===== إعدادات قاعدة البيانات (Firebase Realtime Database — مشروع mulhagna) =====
+const DB_CANDIDATES = [
+  'https://mulhagna-default-rtdb.firebaseio.com',
+  'https://mulhagna-default-rtdb.europe-west1.firebasedatabase.app',
+  'https://mulhagna-default-rtdb.asia-southeast1.firebasedatabase.app'
+];
+let DB = null;
+let teams = []; // [{key, p1, p2, ts}]
+
+// اكتشاف رابط قاعدة البيانات الصحيح تلقائيًا
+async function detectDB(){
+  if(DB) return DB;
+  for(const url of DB_CANDIDATES){
+    try{
+      const r = await fetch(url + '/teams.json?shallow=true');
+      if(r.ok){ DB = url; return DB; }
+    }catch(e){ /* جرّب التالي */ }
+  }
+  return null;
+}
+
+// توحيد الأسماء: «محمّد» و«محمد » والمسافات الزايدة = نفس الاسم
+function normalize(name){
+  return name
+    .trim()
+    .replace(/\s+/g,' ')
+    .toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u0640]/g,'')
+    .replace(/[أإآٱ]/g,'ا')
+    .replace(/ى/g,'ي')
+    .replace(/ة/g,'ه');
+}
+
+function showMsg(text,type){
+  const m = document.getElementById('msg');
+  m.textContent = text;
+  m.className = 'msg ' + type;
+  if(type==='success'){ setTimeout(()=>{ m.className='msg'; }, 4000); }
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function render(){
+  const list = document.getElementById('teamsList');
+  document.getElementById('teamCount').textContent = teams.length;
+  if(teams.length === 0){
+    list.innerHTML = '<div class="empty">ما فيه فرق مسجلة للحين — كن أول فريق يسجل</div>';
+    return;
+  }
+  list.innerHTML = teams.map((t,i)=>`
+    <div class="team">
+      <div class="num">${i+1}</div>
+      <div class="names">${escapeHtml(t.p1)}<span class="x">×</span>${escapeHtml(t.p2)}</div>
+    </div>`).join('');
+}
+
+async function fetchTeams(){
+  const db = await detectDB();
+  if(!db){
+    document.getElementById('teamsList').innerHTML =
+      '<div class="empty">تعذر الاتصال بقاعدة البيانات — تأكد من تفعيل Realtime Database في Firebase</div>';
+    return false;
+  }
+  try{
+    const r = await fetch(db + '/teams.json');
+    const data = await r.json();
+    teams = data
+      ? Object.entries(data).map(([key,v])=>({key, ...v})).sort((a,b)=>a.ts-b.ts)
+      : [];
+    render();
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+async function registerTeam(){
+  const btn = document.getElementById('registerBtn');
+  const p1 = document.getElementById('p1').value.trim().replace(/\s+/g,' ');
+  const p2 = document.getElementById('p2').value.trim().replace(/\s+/g,' ');
+
+  if(!p1 || !p2){
+    showMsg('لازم تكتب اسم اللاعبين الاثنين — التسجيل ثنائي فقط','error');
+    return;
+  }
+  if(p1.length < 2 || p2.length < 2){
+    showMsg('الاسم لازم يكون حرفين على الأقل','error');
+    return;
+  }
+  if(normalize(p1) === normalize(p2)){
+    showMsg('ما يصير نفس الاسم يتسجل مرتين في فريق واحد','error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التسجيل…';
+
+  try{
+    // نجيب أحدث قائمة قبل الفحص عشان ما يفوتنا تسجيل من جهاز ثاني
+    const ok = await fetchTeams();
+    if(!ok){
+      showMsg('تعذر الاتصال، تأكد من النت وحاول مرة ثانية','error');
+      return;
+    }
+
+    const taken = {};
+    teams.forEach(t=>{ taken[normalize(t.p1)] = t; taken[normalize(t.p2)] = t; });
+
+    const dup1 = taken[normalize(p1)];
+    const dup2 = taken[normalize(p2)];
+    if(dup1){
+      showMsg('اللاعب «'+p1+'» مسجل في فريق آخر ('+dup1.p1+' × '+dup1.p2+')','error');
+      return;
+    }
+    if(dup2){
+      showMsg('اللاعب «'+p2+'» مسجل في فريق آخر ('+dup2.p1+' × '+dup2.p2+')','error');
+      return;
+    }
+
+    const r = await fetch(DB + '/teams.json', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ p1, p2, ts: Date.now() })
+    });
+    if(!r.ok){
+      showMsg('صار خطأ أثناء الحفظ، حاول مرة ثانية','error');
+      return;
+    }
+
+    document.getElementById('p1').value = '';
+    document.getElementById('p2').value = '';
+    showMsg('تم تسجيل الفريق بنجاح — بالتوفيق','success');
+    await fetchTeams();
+  }catch(e){
+    showMsg('صار خطأ أثناء الحفظ، حاول مرة ثانية','error');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'تسجيل الفريق';
+  }
+}
+
+document.getElementById('p2').addEventListener('keydown', e=>{ if(e.key==='Enter') registerTeam(); });
+document.getElementById('p1').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('p2').focus(); });
+
+fetchTeams();
+setInterval(fetchTeams, 10000);
+</script>
+</body>
+</html>
